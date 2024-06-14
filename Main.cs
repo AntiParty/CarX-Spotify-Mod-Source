@@ -12,20 +12,14 @@
 // ZML Doc Links - https://zi9.github.io/zml/docs/mod-dev-quick-start/
 // https://zi9.github.io/zml/docs/api-docs/
 
-
 using MyCoolMod;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
-using UnityEngine.UI;
-using ZML.API;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using System.Net;
 using System.Reflection;
+using UnityEngine;
+using ZML.API;
 
 namespace SpotifyMod
 {
@@ -46,9 +40,11 @@ namespace SpotifyMod
         private SpotifyIntegration spotifyIntegration;
         private TrackFetcher trackFetcher;
         string githubRawUrl = "https://raw.githubusercontent.com/AntiParty/CarX-Spotify-Mod/main/trackids.json";
-        private VersionChecker versionChecker;
         private string configFilePath;
-        private bool VersionIsUpToDate = false;
+        private Queue<string> upNextPlaylist = new Queue<string>();
+        private bool displayUpNext = false;
+        private List<string> displayedUpNextPlaylist;
+        private Vector2 scrollPosition = Vector2.zero;
 
         public SpotifyMod()
         {
@@ -102,7 +98,6 @@ namespace SpotifyMod
                 Debug.LogError($"Failed to load config.json: {ex.Message}");
             }
         }
-        // Inside the CheckAndUpdateVersion method
 
         private void SaveConfig()
         {
@@ -130,6 +125,9 @@ namespace SpotifyMod
             public string ClientSecret { get; set; }
         }
 
+        // GUI FUNCTIONS (ALL THE BUTTONS FOR THE MENU)
+        // 
+        //
         public async void OnToolboxGUI()
         {
             GUILayout.BeginHorizontal();
@@ -173,8 +171,6 @@ namespace SpotifyMod
                 PlayrandomSongAsync();
             }
             GUILayout.EndHorizontal();
-
-            
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Increase Volume"))
             {
@@ -185,21 +181,39 @@ namespace SpotifyMod
                 DecreaseVolume();
             }
             GUILayout.EndHorizontal();
+            if (GUILayout.Button("Display up next"))
+            {
+                var upNextPlaylist = await spotifyIntegration.GetUpNextPlaylistAsync();
+                DisplayUpNext(upNextPlaylist);
+                displayUpNext = true; // Set flag to display up next playlist
+            }
+            if (displayUpNext && displayedUpNextPlaylist != null && displayedUpNextPlaylist.Count > 0)
+            {
+                scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+                foreach (var song in displayedUpNextPlaylist)
+                {
+                    GUILayout.Label(song);
+                }
+            }
+
             GUILayout.Label($"SpotifyMod v{Version}");
         }
-       
+        // END OF GUI BUTTONS
 
         public void OnToolboxOpen()
         {
             // Leave this function empty if you don't need it or initialize some stuff here if you want
             // You must however declare it because it is an interface
-            
+
         }
+
+        // Not working (Might delete this whole)
         public async void UpdateSongInfoLabel()
         {
             string currentlyPlaying = await spotifyIntegration.GetCurrentlyPlayingAsync();
             songInfoLabel = currentlyPlaying; // Update the Text element with the song info
         }
+
 
         // start of voids for buttons
         private void StartSpotifyAuth()
@@ -224,7 +238,7 @@ namespace SpotifyMod
             }
         }
 
-
+        // Used for dev testing (checking if spotify works/logs)
         private async void LogSpotifySong()
         {
             try
@@ -333,6 +347,7 @@ namespace SpotifyMod
             var trackIds = await trackFetcher.FetchTrackIdsAsync();
         }
 
+        // Fetching song Id's from GitHub raw txt
         private async void PlayrandomSongAsync()
         {
             try
@@ -346,6 +361,32 @@ namespace SpotifyMod
         }
         //end of voids for buttons
 
+        public async void DisplayUpNext(List<string> upNextPlaylist)
+        {
+            // Display the up next playlist in the UI or log it
+            try
+            {
+                int count = 0;
+                foreach (var song in upNextPlaylist)
+                {
+                    if (count >= 5)
+                        break;
+
+                    Debug.Log(song);
+                    count++;
+                }
+
+                if (count == 0)
+                {
+                    Debug.Log("Up Next playlist is empty.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions
+            }
+        }
         public override void OnDeinitialize()
         {
             // Save Spotify client ID and client secret to config on game exit

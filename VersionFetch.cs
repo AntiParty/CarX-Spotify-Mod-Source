@@ -2,7 +2,10 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using UnityEngine;
-
+/********************************************************************************************/
+//              NOT USED AT ALL CURRENTLY (DONT THINK THIS WILL BE USED)
+//              Currently fetches version through  Assembly 
+/********************************************************************************************/
 public class VersionChecker
 {
     private string githubRawUrl;

@@ -35,8 +35,16 @@
       <HintPath>D:\SteamLibrary\steamapps\common\CarX Drift Racing Online\BepInEx\core\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>D:\SteamLibrary\steamapps\common\CarX Drift Racing Online\Drift Racing Online_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="BepInEx">
       <HintPath>D:\SteamLibrary\steamapps\common\CarX Drift Racing Online\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="CarX.Plugins.Core">
+      <HintPath>D:\SteamLibrary\steamapps\common\CarX Drift Racing Online\Drift Racing Online_Data\Managed\CarX.Plugins.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

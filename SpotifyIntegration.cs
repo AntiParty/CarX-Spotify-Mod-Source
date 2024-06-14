@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -374,6 +375,47 @@ namespace MyCoolMod
 
                 Debug.Log("Access Token Refreshed: REDACTED(##########)");
             }
+        }
+        public async Task<List<string>> GetUpNextPlaylistAsync()
+        {
+            List<string> upNextPlaylist = new List<string>();
+
+            try
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Clear();
+                    httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+
+                    HttpResponseMessage response = await httpClient.GetAsync("https://api.spotify.com/v1/me/player/queue");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = await response.Content.ReadAsStringAsync();
+                        var jsonObject = JObject.Parse(result);
+
+                        // Get the queue items
+                        var queueItems = jsonObject["queue"];
+
+                        // Iterate over the next 5 items or all items if less than 5
+                        for (int i = 0; i < Math.Min(queueItems.Count(), 5); i++)
+                        {
+                            string trackName = (string)queueItems[i]["name"];
+                            upNextPlaylist.Add(trackName);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to fetch up next playlist: {response.ReasonPhrase}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return upNextPlaylist;
         }
 
     }
