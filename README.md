@@ -17,6 +17,7 @@ SpotifyMod is a fun and convenient integration built on top of the ZML template 
 
 - **Spotify Premium**: This mod requires a Spotify Premium account to function.
 - **ZML Template Mod**: The mod is built on the ZML template mod and requires it to be installed.
+- **ZML File**: This mod won't work unless you have the `.zm` file posted in the ZML Discord server. This source file is for those who want to see how to create it for BepInEx. All you have to do is create the GUI etc.
 
 ## Installation
 
@@ -68,4 +69,3 @@ This mod is created for fun and is not affiliated with Spotify. It is intended f
 ---
 
 Enjoy the mod and happy listening!
-
